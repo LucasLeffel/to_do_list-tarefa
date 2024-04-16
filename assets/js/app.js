@@ -1,113 +1,57 @@
-function adicionaTarefaNaLista() {
-    // debugger - descomentar para acompanhar o fluxo da pagina
-    // seleciona o elemento de input text que tem o texto da nova tarefa
-    const novaTarefa = document.getElementById('input_nova_tarefa').value
-    criaNovoItemDaLista(novaTarefa)
-}
+let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
 
-// Modifique a função criaNovoItemDaLista para adicionar um evento de clique em cada novo item da lista
-function criaNovoItemDaLista(textoDaTarefa) {
-    // recupera a lista de tarefas
-    const listaTarefas = document.getElementById('lista_de_tarefas');
-    // cria um novo elemento do tipo li (lista)
-    const novoItem = document.createElement('li');
-    
-    // cria um span para o texto da tarefa
-    const spanTexto = document.createElement('span');
-    spanTexto.innerText = textoDaTarefa;
+const inputTarefa = document.getElementById('taskInput');
+const listaTarefas = document.getElementById('listaTarefas');
 
-    // Cria o botão com símbolo de "+"
-    const botaoRiscar = document.createElement('button');
-    botaoRiscar.innerText = '  +';
-    botaoRiscar.classList.add("botao-riscar");
-    botaoRiscar.addEventListener("click", function(event) {
-        // Riscar ou desriscar o texto da tarefa
-        if (spanTexto.style.textDecoration === 'line-through') {
-            spanTexto.style.textDecoration = 'none';
-            // Remove o botão "Ocultar" se estiver presente
-            const botaoOcultar = novoItem.querySelector(".ocultar");
-            if (botaoOcultar) {
-                botaoOcultar.remove();
-            }
-        } else {
-            spanTexto.style.textDecoration = 'line-through';
-            // Cria o botão "Ocultar" se o texto estiver riscado
-            const botaoOcultar = document.createElement('button');
-            botaoOcultar.innerText = 'Ocultar';
-            botaoOcultar.classList.add("ocultar");
-            botaoOcultar.addEventListener("click", function(event) {
-                // Alterna entre ocultar e exibir o item da lista
-                if (novoItem.style.display === 'none') {
-                    novoItem.style.display = 'block';
-                    botaoOcultar.innerText = 'Ocultar';
-                } else {
-                    novoItem.style.display = 'none';
-                    botaoOcultar.innerText = 'Exibir';
-                }
-                event.stopPropagation();
-            });
-            // Adiciona o botão "Ocultar" ao lado do botão de riscar
-            novoItem.appendChild(botaoOcultar);
+function renderizarTarefas() {
+    listaTarefas.innerHTML = '';
+    tarefas.forEach((tarefa, index) => {
+        const li = document.createElement('li');
+        li.textContent = tarefa.nome;
+
+        const button = document.createElement('button');
+        button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16">
+            <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7 7 0 0 0 2.79-.588M5.21 3.088A7 7 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474z"/>
+            <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12z"/>
+        </svg>`;
+        button.addEventListener('click', () => ocultarTarefa(index));
+        li.appendChild(button);
+
+        if (tarefa.concluida) {
+            li.classList.add('concluida');
         }
-        // Impede que o evento de clique no botão se propague para o item da lista
-        event.stopPropagation();
-    });
-    
-    // Adiciona um evento de clique para chamar a função editar_tarefa() com o próprio elemento clicado como argumento
-    novoItem.addEventListener("click", function(event) {
-        // Verifica se o clique ocorreu no spanTexto
-        if (event.target === spanTexto) {
-            editar_tarefa(novoItem);
-        }
-    });
-    
-    // Adiciona o span e os botões à tarefa
-    novoItem.appendChild(spanTexto);
-    novoItem.appendChild(botaoRiscar);
-    
-    // Adiciona o item à lista
-    listaTarefas.appendChild(novoItem);
+
+        li.addEventListener('click', () => alternarTarefa(index));
+
+        listaTarefas.appendChild(li);
+    }); 
 }
 
 
-
-
-
-function criaInputCheckBoxTarefa(idTarefa) {
-    // cria o elemento de input
-    const inputTarefa = document.createElement('input')
-    // seta o elemento para ser do tipo checkbox
-    inputTarefa.type = 'checkbox'
-    // seta o onclick do input
-    inputTarefa.setAttribute('onclick', `mudaEstadoTarefa('${idTarefa}')`)
-    return inputTarefa
+function adicionarTarefa() {
+    const nomeTarefa = inputTarefa.value.trim();
+    if (nomeTarefa !== '') {
+        tarefas.push({ nome: nomeTarefa, concluida: false });
+        localStorage.setItem('tarefas', JSON.stringify(tarefas));
+        renderizarTarefas();
+        inputTarefa.value = '';
+    }
 }
 
-function mudaEstadoTarefa(idTarefa) {
-    const tarefaSelecionada = document.getElementById(idTarefa)
-    if (tarefaSelecionada.style.textDecoration == 'line-through') {
-        tarefaSelecionada.style = 'text-decoration: none;'
+function alternarTarefa(index) {
+    tarefas[index].concluida = !tarefas[index].concluida;
+    localStorage.setItem('tarefas', JSON.stringify(tarefas));
+    renderizarTarefas();
+}
+
+function ocultarTarefa(index) {
+    if (tarefas[index].concluida) {
+        tarefas.splice(index, 1);
+        localStorage.setItem('tarefas', JSON.stringify(tarefas));
+        renderizarTarefas();
     } else {
-        tarefaSelecionada.style = 'text-decoration: line-through;'
-    }    
+        alert("Esta tarefa não pode ser ocultada porque ainda não foi concluída.");
+    }
 }
 
-function editar_tarefa(tarefa) {
-    // Torna o texto da tarefa clicada editável
-    tarefa.contentEditable = true;
-    tarefa.focus();
-    // Adiciona evento para finalizar a edição ao pressionar Enter ou sair do foco
-    tarefa.addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            // Finaliza a edição ao pressionar Enter
-            tarefa.contentEditable = false;
-        }
-    });
-    tarefa.addEventListener("blur", function() {
-        // Finaliza a edição ao sair do foco
-        tarefa.contentEditable = false;
-        // Você pode adicionar aqui a lógica para salvar os dados editados
-    });
-}
-
+renderizarTarefas();
