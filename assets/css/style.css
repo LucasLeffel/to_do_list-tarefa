@@ -3,68 +3,56 @@ body {
     background-image: url(../image/fundo4.jpg);
     background-size: cover;
     background-repeat: no-repeat;
-    color: white;
-    display: flex;
-    flex-direction: column;
+    color: rgb(255, 255, 255);
     align-items: center;
-    gap: 4rem;
+    flex: content;
 }
 
-.content {
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
+.container {
+    text-align: center; 
 }
 
-.adicionar_item {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-#input_nova_tarefa,
-#botao_tarefa{
-    border: none;
-    font-size: 1rem;
-    outline: none;
+input[type="text"] {
+    width: 70%;
     padding: 8px;
+    margin-right: 5px;
+    background-color: transparent;
+    color: rgb(255, 255, 255);
+    text-align: center; 
 }
 
-#input_nova_tarefa {
-    width: 20rem;
-    opacity: 60%;
-    background-color: black;
+button {
+    padding: 8px 15px;
+    background-color:rgb(120, 9, 9);
     color: white;
-}
-
-#botao_tarefa {
-    background-color: rgba(128, 0, 128, 0.582);
-    color: black;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-    transition: .8s;
 }
 
-#botao_tarefa:hover {
-   background-color: rgba(126, 26, 219, 0.858); 
+button:hover {
+    background-color:rgba(255, 58, 58, 0.858)
 }
 
-#div_lista_de_tarefas {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+ul {
+    list-style-type: none;
     padding: 0;
 }
 
-#div_lista_de_tarefas li {
-    list-style-type: none;
-    font-size: 1.4rem;
-    text-transform: capitalize;
-    display: flex;
-    align-items: center;
-
+li {
+    margin-bottom: 5px;
 }
 
-#div_lista_de_tarefas li .botao-lista {
-    margin-right: 100px; /* Adiciona uma margem à direita para separar os botões */
+.concluida {
+    text-decoration: line-through;
 }
 
+h1 {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+* {
+    outline: none;
+}
